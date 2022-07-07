@@ -1,34 +1,7 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# NextJS
 
-## Getting Started
+## NextJS란?
 
-First, run the development server:
+> 리액트 SSR 프레임워크
 
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+CSR의 경우 Client Side Rendering이라는 이름에서 알 수 있듯 페이지 렌더링이 클라이언트에서 이루어진다. 웹이 앱처럼 동작한다는 점에서는 좋은 사용자 경험을 제공하지만, 페이지 랜더링에 필요한 모든 파일을 시간이 걸린다는 점에서 사용자 경험에 좋지 않은 영향을 끼친다. 반면 SSR의 경우에는 이미 랜더링이 끝난 페이지를 HTML로 서버에서 받아오기 때문에 초기 화면 로딩에 빨라 좋은 사용자 경험을 제공할 수 있다. 하지만 모든 매번 서버에 요청을 보내 페이지를 받아오기 떄문에 CSR에 비해 화면 전환이 느리다.
