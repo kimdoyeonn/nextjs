@@ -83,3 +83,30 @@ Next.js는 웹 애플리케이션을 만들기 위한 도구를 재공하는 리
 리액트로 UI를 구축하고, Next.js 기능을 점진적으로 적용하여 라우팅, 데이터 가져오기, 통합과 같은 일반적인 애플리케이션 요구사항을 해결하는 동시에 개발자와 엔드유저의 환경을 개선할 수 있습니다.
 
 개인 개발자이건 큰 팀의 일원이건 React, Next.js를 활용하여 완벽한 반응형이고, 매우 동적이고 뛰어난 성능의 웹 애플리케이션을 구축할 수 있습니다.
+
+## How Next.js Works
+
+여기선 각 단계에서 애플리케이션 코드에 어떤 일이 일어나는지 알아볼거에요
+
+- 코드가 실행되는 환경: Development vs. Production
+- 코드가 실행되는 때: Buuild Time vs. Runtime
+- 랜더링 환경: Client vs. Server
+
+### Development and Production Environments
+
+enviroments는 코드가 실행되는 컨텍스트라고 이해할 수 있습니다.  
+개발하는 동안에 개발자는 자신의 로컬 기기에서 애플리케이션을 구축하고 실행합니다. production으로 이동하는 것은 애플리케이션을 배포하고 유저가 사용할 수 있도록 만드는 과정입니다.
+
+### Next.js에 적용하는 방법
+
+Next.js는 애플리케이션의 development, production을 위한 기능을 모두 지원합니다.
+
+예를 들어,
+
+- development에서 Next.js는 개발자와 그들의 애플리케이션 구축 경험에 맞게 최적화를 합니다. TypeScript, ESLint integration, Fast Refresh... 과 같은 developer experience를 향상시키는 것을 목표로하는 기능들이 포함되어 있습니다.
+- production에서 Next.js는 앤드 유저와 그들의 사용자 경험에 맞게 최적화를 합니다. 성능과 접근성이 있게 코드를 변환하는 것을 목표로 합니다.
+
+### The Next.js Complier
+
+Next.js는 코드 변환의 대부분과 기본 인프라를 처리하여 애플리케이션이 더 쉽게 운영될 수 있또록 합니다. 이것이 가능한 이유는 Next.js의 컴파일러가 low-level programming language인 Rust로 작성되었고, compilcation, minification, bundling 등등을 할 수 있는 플랫폼인 swc를 가지고 있기 때문입니다.
+
