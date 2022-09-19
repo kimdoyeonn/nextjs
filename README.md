@@ -110,3 +110,10 @@ Next.js는 애플리케이션의 development, production을 위한 기능을 모
 
 Next.js는 코드 변환의 대부분과 기본 인프라를 처리하여 애플리케이션이 더 쉽게 운영될 수 있또록 합니다. 이것이 가능한 이유는 Next.js의 컴파일러가 low-level programming language인 Rust로 작성되었고, compilcation, minification, bundling 등등을 할 수 있는 플랫폼인 swc를 가지고 있기 때문입니다.
 
+### What is Compiling?
+
+개발자는 개발자에게 친숙한 JSX, TypeScript, 최신 버전의 자바스크립트 같은 언어로 코드를 작성합니다. 이 언어들은 개발자의 효율성과 신뢰도를 향상시키지만 브라우저가 이를 이해하기 위해서는 자바스크립트로 컴파일되어야합니다.
+
+Compiling은 한 언어로 된 코드를 다른 언어 또는 언어의 다른 버전으로 출력하는 과정을 말합니다.
+
+Next.js에서 Compilation은 개발 단계에서 코드가 수정될 때, production application을 준비하기 위한 빌드 단계에서 일어납니다.
