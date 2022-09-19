@@ -117,3 +117,11 @@ Next.js는 코드 변환의 대부분과 기본 인프라를 처리하여 애플
 Compiling은 한 언어로 된 코드를 다른 언어 또는 언어의 다른 버전으로 출력하는 과정을 말합니다.
 
 Next.js에서 Compilation은 개발 단계에서 코드가 수정될 때, production application을 준비하기 위한 빌드 단계에서 일어납니다.
+
+### What is Minifying?
+
+개발자는 인간의 가독성에 최적화된 코드를 작성합니다. 이 코드는 주석, 공백, 들여쓰기, 여러줄 쓰기 같이 코드가 실행되는 동안에는 필요하지 않은 정보를 가지고 있습니다.
+
+Minification은 불필요한 코드 서식과 주석을 코드 기능의 변경 없이 제거하는 과정입니다.
+
+Next.js에서 JavaScript와 CSS 파일은 production을 위해 자동으로 최소화됩니다.
