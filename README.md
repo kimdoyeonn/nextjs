@@ -166,3 +166,47 @@ Runtime은 응용프로그램이 작성, 배포된 이후에 유저의 요청에
 이 브라우저는 서버로부터 수신한 응답을 사용자가 상호작용할 수 있는 인터페이스로 전환합니다.
 
 서버는 애플리케이션 코드를 저장하고, 클라이언트로부터 요청을 받고 계산을 하고, 적절한 응답을 다시 보내는 데이터 센터의 컴퓨터를 말합니다.
+
+### What is Rendering?
+
+리액트를 UI를 표현하는 HTML로 변환하는 과정을 Rendering이라고 합니다.
+
+랜더링은 서버에서 일어날수도 있고, 클라이언트에서 일어날수도 있습니다. 또한 빌드되는 과정에 일어날 수 있고, 런타임에서 요청마다 일어날수도 있습니다.
+
+Next.js에서는 세 타입의 랜더링 방법이 가능합니다.
+
+1. Server-Side Rendering
+2. Static Site Generation
+3. Client-Side Rendering
+
+- Pre-Rendering
+  - SSR과 SSG는 외부 데이터를 fetching하고 클라이언트로 결과를 보내기 전에 리액트 컴포넌트를 HTML로 변환하기 때문에 Pre-Rendering이라고도 합니다.
+
+- CSR vs. Pre-Rendering
+  - 기본 리액트 애플리케이션에서 브라우저는 UI를 구성하기 위한 JavaScript와 빈 HTML 껍데기를 받습니다. 이 때 최초 랜더링이 유저의 기기에서 일어나기 때문에 CSR이라고 합니다.
+  - React's useEffect()를 사용하여 데이터를 가져오거나 useSWR과 같은 데이터 가져오기 후크를 선택하여 Next.js 응용 프로그램의 특정 구성 요소에 대해 클라이언트 측 렌더링을 사용하도록 선택할 수 있습니다.
+
+그에 반해서 Next.js는 기본으로 모든 페이지를 미리 랜더링(pre-render)합니다. Pre-rendering은 HTML이 자바스크립트에 의해 유저의 기기가 아닌 서버에서 미리 생성됩니다.
+
+실제로 pre-rendered app이 처음에 이미 생성된 HTML을 볼 수 있는 것과 달리 완전히 CSR인 앱에서는 초기 랜더링이 완료될 때까지 유저는 빈 화면을 보게 됩니다.
+
+- Server-Side Rendering
+  SSR에서는 매 요청마다 HTML 페이지가 서버에서 생성돕니다. 생성된 HTML, JSON, 페이지를 interactive하게 만들어줄 JavaScript 명령은 클라이언트로 보내집니다.
+
+  클라이언트에서는 빠른 interactive하지 않은 페이지로 사용되는 반면, 리액트는 JSON 데이터와 JavaScript 명령을 사용하여 구성요소를 interactive하게 만듭니다. 이를 hydration이라고 부릅니다.
+
+  Next.js에서 getServerSideProps를 사용하여 서버에서 랜더할 페이지를 선택할 수 있습니다.
+
+
+React 18과 Next 12는 React 서버 컴포넌트의 alpha 버전을 소개합니다. 서버 컴포넌트는 서버에서 완전히 랜더링되며 랜더링하는데 클라이언트측 자바스크립트가 필요하지 않습니다.
+또한 일부 서버 컴포넌트를 통해 갭라자는 서버에 일부 로직을 유지하고 해당 로직의 결과만 클라이언트에 전송할 수 있습니다.
+이렇게 하면 클라이언트에 보내는 번들 크기가 줄고 CSR 성능을 향상됩니다.
+
+- Static Site Generation
+  SSG에서 HTML은 서버에서 생성됩니다. 하지만 SSR과는 다르게 런타임의 서버가 아닙니다. 대신 배포하면서 빌드될 때 콘텐츠가 한번에 생성되고 HTML이 CDN에 저장되어 매 요청마다 재사용됩니다.
+
+  Next.js에서는 getStaticProps를 사용하여 페이지를 정적으로 생성하도록 선택할 수 있습니다.
+
+Incremental Static Regeneration을 이용하여 사이트를 만든 후에 정적 페이지를 만들거나 업데이트할 수 있습니다. 즉, 데이터가 변경되더라도 전체 사이트를 재구성할 필요가 없습니다.
+
+Next.js의 장점은 SSG, SSR, CSR 등 가장 적합한 랜더링 방법을 경우에 따라 페이지 단위로 선택할 수 있다는 것입니다.
