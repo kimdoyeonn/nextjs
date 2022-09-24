@@ -243,3 +243,16 @@ Next.js 애플리케이션의 경우에는 코드가 오리진 서버, CDN, Edge
   edge가 코드를 실행함으로써 전통적으로 클라이언트 측이나 서버 측에서 가능하던 몇몇 작업을 edge로 옮길 수 있습니다.
 
   이는 클라이언트로 보내는 코드 양이 줄어들고, 유저 요청의 일부가 origin server로 돌아올 필요가 없으므로 레이턴시가 줄기 때문에 애플리케이션의 성능이 향상될 수 있습니다.
+
+# Create a Next.js App
+## Next.js: The React Framework
+
+- page based routing system (with support for dynamic routes)
+- pre-rendering, static generation, server side rendering 을 페이지 기반으로 지원
+- 빠른 페이지 로딩을 위한 자동 코드 분할
+- 최적화된 prefetching을 지원하는 CSR
+- 내장 CSS, Sass 지원, CSS in JS 라이브러리 지원
+- 빠른 새로고침이 지원되는 개발환경
+- serverless 함수로 API endpoint를 구축하기 위한 API routes
+- Fully extendable
+
