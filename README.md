@@ -256,3 +256,16 @@ Next.js 애플리케이션의 경우에는 코드가 오리진 서버, CDN, Edge
 - serverless 함수로 API endpoint를 구축하기 위한 API routes
 - Fully extendable
 
+## create a Next.js app
+
+```shell
+npx create-next-app nextjs-blog --use-npm --example "https://github.com/vercel/next-learn/tree/master/basics/learn-starter"
+```
+
+create-next-app은 Nextjs을 설치하기 위한 부트스트랩입니다. 설치가 완료되면 해당 파일로 이동하여 `npm run dev`를 실행합니다.
+
+그러면 Next.js 앱의 개발 서버는 3000 포트에서 시작됩니다. `http://localhost:3000` 를 브라우저에서 열어보세요
+
+---  
+
+`pages/index.js`을 열어서 파일을 수정하고 저장해보면 변경사항이 자동으로 열려있는 페이지에 적용되는 것을 확인할 수 있습니다. 이처럼 Next.js 개발서버에서는 Fast Refresh가 가능합니다. 파일이 수정되었을 경우 Next.js는 거의 즉시 자동으로 변경사항을 브라우저에 적용합니다. 새로고침 없이요! 
