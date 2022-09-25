@@ -269,3 +269,30 @@ create-next-app은 Nextjs을 설치하기 위한 부트스트랩입니다. 설�
 ---  
 
 `pages/index.js`을 열어서 파일을 수정하고 저장해보면 변경사항이 자동으로 열려있는 페이지에 적용되는 것을 확인할 수 있습니다. 이처럼 Next.js 개발서버에서는 Fast Refresh가 가능합니다. 파일이 수정되었을 경우 Next.js는 거의 즉시 자동으로 변경사항을 브라우저에 적용합니다. 새로고침 없이요! 
+
+## Navigate Between Pages
+
+- 통합 파일 시스템 라우팅을 사용하여 새로운 페이지를 만듭니다.
+- `Link` 컴포넌트를 사용하여 페이지 간의 client-side navigation을 활성화하는 방법을 알아봅니다.
+- 코드 분할과 prefetching에 대한 기본 지원에 대해 알아봅니다.
+
+### Pages in Next.js
+
+Next.js에서 페이지는 `pages` 디렉토리의 파일에서 export된 리액트 컴포넌트입니다.
+
+페이지는 파일 이름에 따라 경로와 연결됩니다. 예를 들어 개발할 때 `pages/index.js` 파일은 `/` 경로와 연결되고, `pages/posts/first-post.js`sms `/posts/first-post` 경로로 연결됩니다.
+
+### Link Component
+
+웹사이트에서 페이지 사이를 연결할 때, HTML 태그 `<a>`를 사용합니다.
+
+Next.js에서는 `next/link`dml `Link` 컴포넌트를 사용하여 앱에서 페이지를 연결할 수 있습니다. `<Link>`는 client-side navigation을 가능하게 해주고 props를 사용하여 navigation 동작을 더 효과적으로 제어할 수 있도록 해줍니다.
+
+```js
+  <Link href="/">Back to Home</Link>
+```
+
+보다시피 `Link` 컴포넌트의 형태는 `<a>`와 비슷합니다.
+최초나 스크롤로 인해 뷰포트에 있는 `<Link>`는 
+Static Generation을 사용하응 페이지에 대해 기본적으로 prefetch 됩니다.(데이터 포함) server-rendered routes에 해당하는 데이터는 prefetch 되지 않습니다.
+
