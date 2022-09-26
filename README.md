@@ -296,3 +296,27 @@ Next.js에서는 `next/link`dml `Link` 컴포넌트를 사용하여 앱에서 �
 최초나 스크롤로 인해 뷰포트에 있는 `<Link>`는 
 Static Generation을 사용하응 페이지에 대해 기본적으로 prefetch 됩니다.(데이터 포함) server-rendered routes에 해당하는 데이터는 prefetch 되지 않습니다.
 
+`Link` 컴포넌트는 같은 Next.ja 앱의 두 페이지 사이의 client-side navigation을 활성화합니다.
+
+Client-Side navigation이란 자바스크립트를 사용하여 페이지 전환을 하는 것입니다. 이는 브라우저에서 기본 navigation을 하는 것보다 빠릅니다.
+Link를 이용한 페이지이동은 a 태그를 이용한 페이지 이동과 다르게 전체 페이지를 전부 새로고침하지 않습니다.
+
+### Code splitting and prefetching
+
+Next.js는 자동으로 코드 분할을 합니다. 스래서 각 페이지에 필요한 것만 로드합니다. 즉, 홈페이지가 랜더되었을 때, 다른 페이지의 코드들이 처음부터 제공되지 않습니다.
+
+이는 사이트에 수백개의 페이지가 있더라도 홈페이지 로딩을 빠르게 만듭니다.
+
+요청한 페이지에 필요한 코드만 로딩된다는 것은 페이지가 분리되어 있다는 것을 의미합니다. 만약 특정 페이지가 에러를 던진다 하더라도 앱의 나머지는 여전히 동작합니다.
+
+뿐만 아니라 배포된 Next.js 앱은 언제든 Link 컴포넌트가 브라우저 뷰포트에 나타나면 자동으로 연결된 페이지의 코드를 백그라운드에서 prefetch합니다.
+
+때문에 링크를 클릭할 때쯤에는 목적지 페이지의 코드는 이미 백그라운드에서 로드되었고, 페이지 전완은 거의 즉시 완료됩니다.
+
+### Summary
+
+Next.js는 가장 좋은 성능을 위해 code splitting, client-side navigation, prefetching(in production)을 이용하여 앱을 자동으로 최적화합니다.
+
+`pages` 아래 경로를 파일로 만들고 내장 Link 컴포넌트를 사용합니다. 때문에 route를 위한 라이브러리가 필요 없습니다.
+
+만약 Next.js 앱에서 외부 페이지로 이동하고 싶다면 Link 대신 a 태그를 사용하면 됩니다.
