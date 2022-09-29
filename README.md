@@ -363,3 +363,18 @@ Next.js는 또한 기본으로 이미지 최적화를 지원합니다. 이를 �
 
 이미지는 항상 구글이 검색 순위에 사용할 핵심 웹 바이탈인 cumulative layout shift를 피하는 방식으로 랜더링됩니다.
 
+## Metadata
+
+만약 HTML에 있는 <title> 태그 같은 페이지의 메타데이터를 수정하고 싶다면?
+
+<title>은 HTML 태그의 <head>의 일부분입니다. 그래서 title을 수정하려면 Next.js 페이지에서 head 태그에 접근을 해야 합니다.
+
+Next.js에서는 내장되어 있는 <Head> 컴포넌트를 사용해서 페이지의 <head>를 수정할 수 있습니다.
+
+Head 컴포넌트는 `next/head` 모듈에서 임포트할 수 있습니다.
+
+```js
+  <Head>
+    <title>First Post</title>
+  </Head>
+```
