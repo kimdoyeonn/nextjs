@@ -378,3 +378,23 @@ Head 컴포넌트는 `next/head` 모듈에서 임포트할 수 있습니다.
     <title>First Post</title>
   </Head>
 ```
+
+## Third Party JavaScript
+
+서드파티 자바스크립트는 서드 파티 소스에서 추가된 모든 스크립트를 말합니다. 일반적으로 서드파티 스크립트는 분석, 광고 및 고객 지원 위젯과 같이 처음부터 작성할 필요가 없는 사이트에 새로운 기능을 도입하기 위해 포함합니다.
+
+```js
+<Head>
+  <title>First Post</title>
+</Head>
+<Script
+  src="https://connect.facebook.net/en_US/sdk.js"
+  strategy="lazyOnload"
+  onLoad={() =>
+    console.log(`script loaded correctly, window.FB has been populated`)
+  }
+/>
+```
+
+- `strategy`: 언제 서드파티 스크립트가 로드될지 컨트롤합니다. `lazyOnload`는 Next.js에게 브라우저에게 적당한 때까지 로딩을 미루도록 지시합니다.
+- `onLoad`: 스크립트 로딩이 끝난 직후에 실행할 자바스크립트 코드를 정의합니다.
