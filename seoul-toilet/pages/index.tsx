@@ -32,10 +32,11 @@ declare global {
 const Home: NextPage<IProps> = (props: IProps) => {
   const { data: toiletLoc, err } = props;
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  const [displayMap, setDisplayMap] = useState(null);
   console.log(err)
   useEffect(() => {
     const $script = document.createElement("script");
-    $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOMAP_KEY}`;
+    $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOMAP_KEY}&autoload=false`;
     $script.addEventListener("load", () => setMapLoaded(true));
     document.head.appendChild($script);
   }, []);
@@ -43,29 +44,58 @@ const Home: NextPage<IProps> = (props: IProps) => {
     if (!mapLoaded) return;
     
     window?.kakao.maps.load(() => {
-        var container = document.getElementById('map');
-        var options = {
-                  center: window.kakao.maps.LatLng(33.450701, 126.570667),
-                  level: 3
-              };
-      
-        var map = window.kakao.maps.Map(container, options);
+      var container = document.getElementById('map');
+      let lat = 33.450701;
+      let lon = 126.570667;
+      if (navigator) {
+        console.log(navigator)
+        navigator.geolocation.getCurrentPosition((pos) => {
+          const crd = pos.coords;
+          lat = crd.latitude;
+          lon = crd.longitude;
+          var options = {
+            center: new window.kakao.maps.LatLng(lat, lon),
+            level: 3
+          };
+          
+          var map = new window.kakao.maps.Map(container, options);
+          setDisplayMap(map);
+          var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
+          var marker = new window.kakao.maps.Marker({
+            position: markerPosition
+          });
+          marker.setMap(map);
+        }, (err) => {
+          window.alert(err)
+        })
+      }
 
     })
     
   }, [mapLoaded]);
+
+  const markPin = ({ lat, lon }: { lat: number, lon: number }) => {
+    var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
+    var marker = new window.kakao.maps.Marker({
+      position: markerPosition
+    });
+    marker.setMap(displayMap);
+  }
+
+  useEffect(() => {
+    if (!mapLoaded) return;
+    toiletLoc?.map((toilet: IToilet) => {
+      markPin({ lat: toilet.CENTER_X1, lon: toilet.CENTER_Y1 })
+    })
+  },[])
+
   return (
     <>
       <div className={styles.container}>
         <h1>서울시 화장실 위치</h1>
         <ul>
-          {err ? <h3>err</h3> : toiletLoc?.map((toilet: IToilet) => {
-            return <>
-              <li>{toilet.FNAME}/{toilet.POI_ID}/{toilet.CENTER_X1}/{toilet.CENTER_Y1}</li>
-            </>
-          })}
         </ul>
-        <div id="map"></div>
+        <div id="map" style={{ height: '500px', width: '500px' }}></div>
       </div>
     </>
   )
