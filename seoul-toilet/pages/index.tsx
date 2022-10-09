@@ -29,65 +29,69 @@ declare global {
   }
 }
 
+interface IPosition {
+  title: string,
+  latlng: any,
+}
+
 const Home: NextPage<IProps> = (props: IProps) => {
   const { data: toiletLoc, err } = props;
+  console.log('dawnssssssss', toiletLoc)
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
   const [displayMap, setDisplayMap] = useState(null);
-  console.log(err)
+  const [positions, setPositions] = useState<IPosition[]>([]);
   useEffect(() => {
     const $script = document.createElement("script");
     $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOMAP_KEY}&autoload=false`;
     $script.addEventListener("load", () => setMapLoaded(true));
     document.head.appendChild($script);
-  }, []);
-  useEffect(() => {
-    if (!mapLoaded) return;
     
     window?.kakao.maps.load(() => {
       var container = document.getElementById('map');
       let lat = 33.450701;
       let lon = 126.570667;
+      console.log('start')
       if (navigator) {
-        console.log(navigator)
+        console.log('navigator')
         navigator.geolocation.getCurrentPosition((pos) => {
           const crd = pos.coords;
           lat = crd.latitude;
           lon = crd.longitude;
-          var options = {
+          let options = {
             center: new window.kakao.maps.LatLng(lat, lon),
-            level: 3
+            level: 10
           };
-          
           var map = new window.kakao.maps.Map(container, options);
-          setDisplayMap(map);
+          
           var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
           var marker = new window.kakao.maps.Marker({
             position: markerPosition
           });
           marker.setMap(map);
+          const markPin = ({ lat, lon, title }: { lat: number, lon: number, title: string }) => {
+            var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
+            console.log(title);
+            var marker = new window.kakao.maps.Marker({
+              map,
+              title,
+              position: markerPosition
+            });
+            marker.setMap(map);
+          }
+          console.log('toilets', toiletLoc);
+          toiletLoc?.forEach((toilet: IToilet) => {
+            console.log(toilet)
+            markPin({ lat: toilet.Y_WGS84, lon: toilet.X_WGS84, title: toilet.FNAME })
+          })
         }, (err) => {
           window.alert(err)
         })
       }
-
+      console.log('startstart')
+      console.log('mark')
     })
     
   }, [mapLoaded]);
-
-  const markPin = ({ lat, lon }: { lat: number, lon: number }) => {
-    var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
-    var marker = new window.kakao.maps.Marker({
-      position: markerPosition
-    });
-    marker.setMap(displayMap);
-  }
-
-  useEffect(() => {
-    if (!mapLoaded) return;
-    toiletLoc?.map((toilet: IToilet) => {
-      markPin({ lat: toilet.CENTER_X1, lon: toilet.CENTER_Y1 })
-    })
-  },[])
 
   return (
     <>
@@ -103,8 +107,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
 
 Home.getInitialProps = async function () {
   try {
-    const res = await axios.get(`http://openapi.seoul.go.kr:8088/${process.env.DATA_KEY}/json/SearchPublicToiletPOIService/1/1000`)
-    console.log(res.data.SearchPublicToiletPOIService)
+    const res = await axios.get(`http://openapi.seoul.go.kr:8088/${process.env.DATA_KEY}/json/SearchPublicToiletPOIService/1/100`)
     
     const { row: data, list_total_count: count } = res.data.SearchPublicToiletPOIService
     return {
