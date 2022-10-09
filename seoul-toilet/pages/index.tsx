@@ -36,10 +36,7 @@ interface IPosition {
 
 const Home: NextPage<IProps> = (props: IProps) => {
   const { data: toiletLoc, err } = props;
-  console.log('dawnssssssss', toiletLoc)
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
-  const [displayMap, setDisplayMap] = useState(null);
-  const [positions, setPositions] = useState<IPosition[]>([]);
   useEffect(() => {
     const $script = document.createElement("script");
     $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOMAP_KEY}&autoload=false`;
@@ -50,9 +47,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
       var container = document.getElementById('map');
       let lat = 33.450701;
       let lon = 126.570667;
-      console.log('start')
       if (navigator) {
-        console.log('navigator')
         navigator.geolocation.getCurrentPosition((pos) => {
           const crd = pos.coords;
           lat = crd.latitude;
@@ -78,7 +73,6 @@ const Home: NextPage<IProps> = (props: IProps) => {
             });
             marker.setMap(map);
           }
-          console.log('toilets', toiletLoc);
           toiletLoc?.forEach((toilet: IToilet) => {
             console.log(toilet)
             markPin({ lat: toilet.Y_WGS84, lon: toilet.X_WGS84, title: toilet.FNAME })
@@ -87,8 +81,6 @@ const Home: NextPage<IProps> = (props: IProps) => {
           window.alert(err)
         })
       }
-      console.log('startstart')
-      console.log('mark')
     })
     
   }, [mapLoaded]);
