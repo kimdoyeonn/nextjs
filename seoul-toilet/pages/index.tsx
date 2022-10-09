@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css'
 
 interface IProps {
-  data?: IToilet[],
+  toiletList?: IToilet[],
   count?: number,
   err?: any,
 }
@@ -35,7 +35,7 @@ interface IPosition {
 }
 
 const Home: NextPage<IProps> = (props: IProps) => {
-  const { data: toiletLoc, err } = props;
+  const { toiletList, err } = props;
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
   useEffect(() => {
     const $script = document.createElement("script");
@@ -65,7 +65,6 @@ const Home: NextPage<IProps> = (props: IProps) => {
           marker.setMap(map);
           const markPin = ({ lat, lon, title }: { lat: number, lon: number, title: string }) => {
             var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
-            console.log(title);
             var marker = new window.kakao.maps.Marker({
               map,
               title,
@@ -73,8 +72,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
             });
             marker.setMap(map);
           }
-          toiletLoc?.forEach((toilet: IToilet) => {
-            console.log(toilet)
+          toiletList?.forEach((toilet: IToilet) => {
             markPin({ lat: toilet.Y_WGS84, lon: toilet.X_WGS84, title: toilet.FNAME })
           })
         }, (err) => {
@@ -98,13 +96,29 @@ const Home: NextPage<IProps> = (props: IProps) => {
 }
 
 Home.getInitialProps = async function () {
-  try {
-    const res = await axios.get(`http://openapi.seoul.go.kr:8088/${process.env.DATA_KEY}/json/SearchPublicToiletPOIService/1/100`)
-    
-    const { row: data, list_total_count: count } = res.data.SearchPublicToiletPOIService
+  async function getData(start: number, offset: number) {
+    console.log(start, offset)
+    const res = await axios.get(`http://openapi.seoul.go.kr:8088/${process.env.DATA_KEY}/json/SearchPublicToiletPOIService/${start}/${start + offset - 1}`)
+
+    const { row: data, list_total_count: count } = res.data?.SearchPublicToiletPOIService
     return {
       data, count
     }
+  }
+  try {
+    let start = 1
+    const offset = 1000
+    const { data, count } = await getData(start, offset);
+    let toiletList = [...data]
+    while (count > start + offset) {
+      start += offset
+      const { data, count } = await getData(start, offset);
+      toiletList = [...toiletList, ...data]
+    }
+
+    console.log(toiletList.length)
+
+    return { toiletList }
   } catch(err) {
     console.log(err)
     return { err };
