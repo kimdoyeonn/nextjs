@@ -65,7 +65,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
           marker.setMap(map);
           const markPin = ({ lat, lon, title }: { lat: number, lon: number, title: string }) => {
             const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'
-            const imageSize = new window.kakao.maps.Size(64, 69);
+            const imageSize = new window.kakao.maps.Size(32, 34);
             const imageOption = {offset: new window.kakao.maps.Point(27, 69)}
             const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
             var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
