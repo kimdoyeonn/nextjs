@@ -54,7 +54,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
           lon = crd.longitude;
           let options = {
             center: new window.kakao.maps.LatLng(lat, lon),
-            level: 10
+            level: 3
           };
           var map = new window.kakao.maps.Map(container, options);
           
@@ -64,11 +64,16 @@ const Home: NextPage<IProps> = (props: IProps) => {
           });
           marker.setMap(map);
           const markPin = ({ lat, lon, title }: { lat: number, lon: number, title: string }) => {
+            const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'
+            const imageSize = new window.kakao.maps.Size(64, 69);
+            const imageOption = {offset: new window.kakao.maps.Point(27, 69)}
+            const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
             var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
             var marker = new window.kakao.maps.Marker({
               map,
               title,
-              position: markerPosition
+              position: markerPosition,
+              image: markerImage,
             });
             marker.setMap(map);
           }
