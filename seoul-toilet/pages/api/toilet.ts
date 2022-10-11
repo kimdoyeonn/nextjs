@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import axios from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
+import { toiletsData } from '../../helpers/toilets-data'
 
 export interface IToilet {
   POI_ID: string,
@@ -18,17 +18,14 @@ export interface IToilet {
 
 type Data = {
   toiletList: IToilet[],
-  count: number,
+  count?: number,
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { data: {
-    SearchPublicToiletPOIService: {
-      row: toiletList, list_total_count: count
-    }
-  } } = await axios.get(`http://openapi.seoul.go.kr:8088/${process.env.DATA_KEY}/json/SearchPublicToiletPOIService/1/1000`)
-  res.status(200).json({ toiletList, count })
+  await toiletsData.fetch();
+  const toiletList = toiletsData.getAll()
+  res.status(200).json({ toiletList })
 }

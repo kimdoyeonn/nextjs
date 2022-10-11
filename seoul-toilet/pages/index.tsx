@@ -35,8 +35,17 @@ interface IPosition {
 }
 
 const Home: NextPage<IProps> = (props: IProps) => {
-  const { toiletList, err } = props;
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  const [toiletList, setToiletList] = useState<any[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const result = await fetch('/api/toilet')
+      const { toiletList } = await result.json();
+      setToiletList(toiletList);
+    })()
+  }, [])
+
   useEffect(() => {
     const $script = document.createElement("script");
     $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOMAP_KEY}&autoload=false`;
@@ -100,34 +109,34 @@ const Home: NextPage<IProps> = (props: IProps) => {
   )
 }
 
-Home.getInitialProps = async function () {
-  async function getData(start: number, offset: number) {
-    console.log(start, offset)
-    const res = await axios.get(`http://openapi.seoul.go.kr:8088/${process.env.DATA_KEY}/json/SearchPublicToiletPOIService/${start}/${start + offset - 1}`)
+// Home.getInitialProps = async function () {
+  // async function getData(start: number, offset: number) {
+  //   console.log(start, offset)
+  //   const res = await axios.get(`http://openapi.seoul.go.kr:8088/${process.env.DATA_KEY}/json/SearchPublicToiletPOIService/${start}/${start + offset - 1}`)
 
-    const { row: data, list_total_count: count } = res.data?.SearchPublicToiletPOIService
-    return {
-      data, count
-    }
-  }
-  try {
-    let start = 1
-    const offset = 1000
-    const { data, count } = await getData(start, offset);
-    let toiletList = [...data]
-    while (count > start + offset) {
-      start += offset
-      const { data, count } = await getData(start, offset);
-      toiletList = [...toiletList, ...data]
-    }
+  //   const { row: data, list_total_count: count } = res.data?.SearchPublicToiletPOIService
+  //   return {
+  //     data, count
+  //   }
+  // }
+  // try {
+  //   let start = 1
+  //   const offset = 1000
+  //   const { data, count } = await getData(start, offset);
+  //   let toiletList = [...data]
+  //   while (count > start + offset) {
+  //     start += offset
+  //     const { data, count } = await getData(start, offset);
+  //     toiletList = [...toiletList, ...data]
+  //   }
 
-    console.log(toiletList.length)
+  //   console.log(toiletList.length)
+//   try {
 
-    return { toiletList }
-  } catch(err) {
-    console.log(err)
-    return { err };
-  }
-}
+//   } catch(err) {
+//     console.log(err)
+//     return { err };
+//   }
+// }
 
 export default Home
