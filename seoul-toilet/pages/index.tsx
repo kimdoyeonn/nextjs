@@ -36,22 +36,15 @@ interface IPosition {
 
 const Home: NextPage<IProps> = (props: IProps) => {
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
-  const [toiletList, setToiletList] = useState<any[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      const result = await fetch('/api/toilet')
-      const { toiletList } = await result.json();
-      setToiletList(toiletList);
-    })()
-  }, [])
-
+  const [distance, setDistance] = useState<number>(100);
+  const { toiletList } = props;
+  
   useEffect(() => {
     const $script = document.createElement("script");
     $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOMAP_KEY}&autoload=false`;
     $script.addEventListener("load", () => setMapLoaded(true));
     document.head.appendChild($script);
-    
+
     window?.kakao.maps.load(() => {
       var container = document.getElementById('map');
       let lat = 33.450701;
@@ -87,7 +80,23 @@ const Home: NextPage<IProps> = (props: IProps) => {
             marker.setMap(map);
           }
           toiletList?.forEach((toilet: IToilet) => {
-            markPin({ lat: toilet.Y_WGS84, lon: toilet.X_WGS84, title: toilet.FNAME })
+            console.log(getDistanceFromLatLonInKm(lat, lon, toilet.Y_WGS84, toilet.X_WGS84), distance)
+            function getDistanceFromLatLonInKm(lat1: number,lng1: number, lat2:number,lng2: number) {
+              function deg2rad(deg: number) {
+                return deg * (Math.PI/180)
+              }
+          
+              var R = 6371; // Radius of the earth in km
+              var dLat = deg2rad(lat2-lat1);  // deg2rad below
+              var dLon = deg2rad(lng2-lng1);
+              var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+              var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+              var d = R * c; // Distance in km
+              return d;
+            }
+            if (getDistanceFromLatLonInKm(lat, lon, toilet.Y_WGS84, toilet.X_WGS84) < distance / 1000) {
+              markPin({ lat: toilet.Y_WGS84, lon: toilet.X_WGS84, title: toilet.FNAME })
+            } 
           })
         }, (err) => {
           window.alert(err)
@@ -95,18 +104,29 @@ const Home: NextPage<IProps> = (props: IProps) => {
       }
     })
     
-  }, [mapLoaded]);
+  }, [mapLoaded, distance]);
+
+  const searchToilet = (distance: number) => {
+    setDistance(distance)
+  }
 
   return (
     <>
       <div className={styles.container}>
         <h1>서울시 화장실 위치</h1>
-        <ul>
-        </ul>
+        <button onClick={() => searchToilet(100)}>100m</button>
+        <button onClick={() => searchToilet(300)}>300m</button>
+        <button onClick={() => searchToilet(500)}>500m</button>
+
         <div id="map" style={{ height: '500px', width: '500px' }}></div>
       </div>
     </>
   )
+}
+
+Home.getInitialProps = async function () {
+  const { toiletList } = await (await fetch('http://localhost:3000/api/toilet')).json()
+  return { toiletList };
 }
 
 // Home.getInitialProps = async function () {
