@@ -1,110 +1,228 @@
 import axios from 'axios'
 import type { NextPage } from 'next'
-import Script from 'next/script';
-import { useEffect, useState } from 'react';
+import Script from 'next/script'
+import { useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
 
 interface IProps {
-  toiletList?: IToilet[],
-  count?: number,
-  err?: any,
+  toiletList?: IToilet[]
+  count?: number
+  err?: any
 }
 
 interface IToilet {
-  POI_ID: string,
-  FNAME: string,
-  ANAME: string,
-  CNAME: string,
-  CENTER_X1: number,
-  CENTER_Y1: number,
-  X_WGS84: number,
-  Y_WGS84: number,
-  INSERTDATE: string,
-  UPDATEDATE: string,
+  POI_ID: string
+  FNAME: string
+  ANAME: string
+  CNAME: string
+  CENTER_X1: number
+  CENTER_Y1: number
+  X_WGS84: number
+  Y_WGS84: number
+  INSERTDATE: string
+  UPDATEDATE: string
 }
 
 declare global {
   interface Window {
-    kakao: any;
+    kakao: any
   }
 }
 
 interface IPosition {
-  title: string,
-  latlng: any,
+  title: string
+  latlng: any
 }
 
 const Home: NextPage<IProps> = (props: IProps) => {
-  const [mapLoaded, setMapLoaded] = useState<boolean>(false);
-  const [distance, setDistance] = useState<number>(100);
-  const { toiletList } = props;
-  
+  const [mapLoaded, setMapLoaded] = useState<boolean>(false)
+  const [distance, setDistance] = useState<number>(100)
+  const [map, setMap] = useState<any>(null)
+  const [location, setLocation] = useState<{ lat: number; lon: number }>({
+    lat: 0,
+    lon: 0,
+  })
+  const { toiletList } = props
+
   useEffect(() => {
-    const $script = document.createElement("script");
-    $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOMAP_KEY}&autoload=false`;
-    $script.addEventListener("load", () => setMapLoaded(true));
-    document.head.appendChild($script);
+    const $script = document.createElement('script')
+    $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAOMAP_KEY}&autoload=false`
+    $script.addEventListener('load', () => setMapLoaded(true))
+    document.head.appendChild($script)
 
     window?.kakao.maps.load(() => {
-      var container = document.getElementById('map');
-      let lat = 33.450701;
-      let lon = 126.570667;
+      var container = document.getElementById('map')
+      let lat = 33.450701
+      let lon = 126.570667
       if (navigator) {
-        navigator.geolocation.getCurrentPosition((pos) => {
-          const crd = pos.coords;
-          lat = crd.latitude;
-          lon = crd.longitude;
-          let options = {
-            center: new window.kakao.maps.LatLng(lat, lon),
-            level: 3
-          };
-          var map = new window.kakao.maps.Map(container, options);
-          
-          var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
-          var marker = new window.kakao.maps.Marker({
-            position: markerPosition
-          });
-          marker.setMap(map);
-          const markPin = ({ lat, lon, title }: { lat: number, lon: number, title: string }) => {
-            const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'
-            const imageSize = new window.kakao.maps.Size(32, 34);
-            const imageOption = {offset: new window.kakao.maps.Point(27, 69)}
-            const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
-            var markerPosition  = new window.kakao.maps.LatLng(lat, lon);
-            var marker = new window.kakao.maps.Marker({
-              map,
-              title,
-              position: markerPosition,
-              image: markerImage,
-            });
-            marker.setMap(map);
-          }
-          toiletList?.forEach((toilet: IToilet) => {
-            console.log(getDistanceFromLatLonInKm(lat, lon, toilet.Y_WGS84, toilet.X_WGS84), distance)
-            function getDistanceFromLatLonInKm(lat1: number,lng1: number, lat2:number,lng2: number) {
-              function deg2rad(deg: number) {
-                return deg * (Math.PI/180)
-              }
-          
-              var R = 6371; // Radius of the earth in km
-              var dLat = deg2rad(lat2-lat1);  // deg2rad below
-              var dLon = deg2rad(lng2-lng1);
-              var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
-              var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-              var d = R * c; // Distance in km
-              return d;
+        navigator.geolocation.watchPosition(
+          (pos) => {
+            const crd = pos.coords
+            lat = crd.latitude
+            lon = crd.longitude
+            setLocation({ lat, lon })
+            let options = {
+              center: new window.kakao.maps.LatLng(lat, lon),
+              level: 3,
             }
-            if (getDistanceFromLatLonInKm(lat, lon, toilet.Y_WGS84, toilet.X_WGS84) < distance / 1000) {
-              markPin({ lat: toilet.Y_WGS84, lon: toilet.X_WGS84, title: toilet.FNAME })
-            } 
-          })
-        }, (err) => {
-          window.alert(err)
+            var map = new window.kakao.maps.Map(container, options)
+
+            var markerPosition = new window.kakao.maps.LatLng(lat, lon)
+            var marker = new window.kakao.maps.Marker({
+              position: markerPosition,
+            })
+            marker.setMap(map)
+            setMap(map)
+            const markPin = ({
+              lat,
+              lon,
+              title,
+            }: {
+              lat: number
+              lon: number
+              title: string
+            }) => {
+              const imageSrc =
+                'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'
+              const imageSize = new window.kakao.maps.Size(32, 34)
+              const imageOption = {
+                offset: new window.kakao.maps.Point(27, 69),
+              }
+              const markerImage = new window.kakao.maps.MarkerImage(
+                imageSrc,
+                imageSize,
+                imageOption
+              )
+              var markerPosition = new window.kakao.maps.LatLng(lat, lon)
+              var marker = new window.kakao.maps.Marker({
+                map,
+                title,
+                position: markerPosition,
+                image: markerImage,
+              })
+              marker.setMap(map)
+            }
+            toiletList?.forEach((toilet: IToilet) => {
+              function getDistanceFromLatLonInKm(
+                lat1: number,
+                lng1: number,
+                lat2: number,
+                lng2: number
+              ) {
+                function deg2rad(deg: number) {
+                  return deg * (Math.PI / 180)
+                }
+
+                var R = 6371 // Radius of the earth in km
+                var dLat = deg2rad(lat2 - lat1) // deg2rad below
+                var dLon = deg2rad(lng2 - lng1)
+                var a =
+                  Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(deg2rad(lat1)) *
+                    Math.cos(deg2rad(lat2)) *
+                    Math.sin(dLon / 2) *
+                    Math.sin(dLon / 2)
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+                var d = R * c // Distance in km
+                return d
+              }
+              if (
+                getDistanceFromLatLonInKm(
+                  lat,
+                  lon,
+                  toilet.Y_WGS84,
+                  toilet.X_WGS84
+                ) <
+                distance / 1000
+              ) {
+                markPin({
+                  lat: toilet.Y_WGS84,
+                  lon: toilet.X_WGS84,
+                  title: toilet.FNAME,
+                })
+              }
+            })
+          },
+          (err) => {
+            window.alert(err)
+          }
+        )
+      }
+    })
+  }, [mapLoaded])
+
+  useEffect(() => {
+    toiletList?.forEach((toilet: IToilet) => {
+      function getDistanceFromLatLonInKm(
+        lat1: number,
+        lng1: number,
+        lat2: number,
+        lng2: number
+      ) {
+        function deg2rad(deg: number) {
+          return deg * (Math.PI / 180)
+        }
+
+        var R = 6371 // Radius of the earth in km
+        var dLat = deg2rad(lat2 - lat1) // deg2rad below
+        var dLon = deg2rad(lng2 - lng1)
+        var a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(deg2rad(lat1)) *
+            Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2)
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        var d = R * c // Distance in km
+        return d
+      }
+
+      const markPin = ({
+        lat,
+        lon,
+        title,
+      }: {
+        lat: number
+        lon: number
+        title: string
+      }) => {
+        const imageSrc =
+          'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'
+        const imageSize = new window.kakao.maps.Size(32, 34)
+        const imageOption = {
+          offset: new window.kakao.maps.Point(27, 69),
+        }
+        const markerImage = new window.kakao.maps.MarkerImage(
+          imageSrc,
+          imageSize,
+          imageOption
+        )
+        var markerPosition = new window.kakao.maps.LatLng(lat, lon)
+        var marker = new window.kakao.maps.Marker({
+          map,
+          title,
+          position: markerPosition,
+          image: markerImage,
+        })
+        marker.setMap(map)
+      }
+      if (
+        getDistanceFromLatLonInKm(
+          location.lat,
+          location.lon,
+          toilet.Y_WGS84,
+          toilet.X_WGS84
+        ) <
+        distance / 1000
+      ) {
+        markPin({
+          lat: toilet.Y_WGS84,
+          lon: toilet.X_WGS84,
+          title: toilet.FNAME,
         })
       }
     })
-    
-  }, [mapLoaded, distance]);
+  }, [distance])
 
   const searchToilet = (distance: number) => {
     setDistance(distance)
@@ -117,7 +235,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
         <button onClick={() => searchToilet(100)}>100m</button>
         <button onClick={() => searchToilet(300)}>300m</button>
         <button onClick={() => searchToilet(500)}>500m</button>
-
+        {distance}
         <div id="map" style={{ height: '500px', width: '500px' }}></div>
       </div>
     </>
@@ -125,38 +243,10 @@ const Home: NextPage<IProps> = (props: IProps) => {
 }
 
 Home.getInitialProps = async function () {
-  const { toiletList } = await (await fetch('http://localhost:3000/api/toilet')).json()
-  return { toiletList };
+  const { toiletList } = await (
+    await fetch('http://localhost:3000/api/toilet')
+  ).json()
+  return { toiletList }
 }
-
-// Home.getInitialProps = async function () {
-  // async function getData(start: number, offset: number) {
-  //   console.log(start, offset)
-  //   const res = await axios.get(`http://openapi.seoul.go.kr:8088/${process.env.DATA_KEY}/json/SearchPublicToiletPOIService/${start}/${start + offset - 1}`)
-
-  //   const { row: data, list_total_count: count } = res.data?.SearchPublicToiletPOIService
-  //   return {
-  //     data, count
-  //   }
-  // }
-  // try {
-  //   let start = 1
-  //   const offset = 1000
-  //   const { data, count } = await getData(start, offset);
-  //   let toiletList = [...data]
-  //   while (count > start + offset) {
-  //     start += offset
-  //     const { data, count } = await getData(start, offset);
-  //     toiletList = [...toiletList, ...data]
-  //   }
-
-  //   console.log(toiletList.length)
-//   try {
-
-//   } catch(err) {
-//     console.log(err)
-//     return { err };
-//   }
-// }
 
 export default Home
