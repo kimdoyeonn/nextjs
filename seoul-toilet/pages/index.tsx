@@ -42,6 +42,8 @@ const Home: NextPage<IProps> = (props: IProps) => {
     lat: 0,
     lon: 0,
   })
+  const [locMarker, setLocMarker] = useState<any>(null)
+  const [markers, setMarkers] = useState<any[]>([])
   const { toiletList } = props
 
   useEffect(() => {
@@ -71,6 +73,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
             var marker = new window.kakao.maps.Marker({
               position: markerPosition,
             })
+            setLocMarker(marker)
             marker.setMap(map)
             setMap(map)
             const markPin = ({
@@ -100,6 +103,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
                 position: markerPosition,
                 image: markerImage,
               })
+              setMarkers((prev) => [...prev, marker])
               marker.setMap(map)
             }
             toiletList?.forEach((toilet: IToilet) => {
@@ -222,6 +226,10 @@ const Home: NextPage<IProps> = (props: IProps) => {
         })
       }
     })
+
+    return () => {
+      setMarkers([])
+    }
   }, [distance])
 
   const searchToilet = (distance: number) => {
@@ -235,6 +243,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
         <button onClick={() => searchToilet(100)}>100m</button>
         <button onClick={() => searchToilet(300)}>300m</button>
         <button onClick={() => searchToilet(500)}>500m</button>
+        <button onClick={() => searchToilet(700)}>700m</button>
         {distance}
         <div id="map" style={{ height: '500px', width: '500px' }}></div>
       </div>
