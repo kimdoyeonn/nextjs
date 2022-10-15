@@ -208,6 +208,7 @@ const Home: NextPage<IProps> = (props: IProps) => {
           position: markerPosition,
           image: markerImage,
         })
+        marker.setMap(null)
         marker.setMap(map)
       }
       if (
@@ -227,9 +228,6 @@ const Home: NextPage<IProps> = (props: IProps) => {
       }
     })
 
-    return () => {
-      setMarkers([])
-    }
   }, [distance])
 
   const searchToilet = (distance: number) => {
